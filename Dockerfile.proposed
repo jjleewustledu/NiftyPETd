@@ -16,14 +16,14 @@ WORKDIR /app
 COPY . /app
 
 
-
+#-----------------------------------------------
 
 
 RUN git clone https://github.com/pjmark/NIMPA.git
 RUN git clone https://github.com/pjmark/NIPET.git
 RUN pip install --upgrade pip
 RUN conda update conda
-RUN conda create âname niftypet python=2.7
+RUN conda create --name niftypet python=2.7
 RUN source activate niftypet
 RUN conda install -c conda-forge nibabel=2.2.1
 RUN conda install -c conda-forge pydicom=1.0.2
@@ -36,7 +36,3 @@ RUN source deactivate
 RUN source activate niftypet 
 cd NIPET
 RUN pip install --no-binary :all: --verbose -e .
-RUN conda install matplotlib
-RUN conda install jupiter
-RUN conda install sympy
- 
