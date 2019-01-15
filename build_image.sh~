@@ -1,3 +1,0 @@
-#! /bin/bash
-
-nvidia-docker build -t cuda-image -f ${HOME2}/Docker/NiftyPETd/Dockerfile ${HOME2}/Docker/NiftyPETd
