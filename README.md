@@ -1,2 +1,3 @@
 # NiftyPETd
-NiftyPET for Docker or Singularity images
+NiftyPET for Docker or Singularity images.
+E.g., docker run jjleewustledu/niftypetd-image:Reconstruction 
