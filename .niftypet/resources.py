@@ -45,11 +45,11 @@ CC_ARCH = '-gencode=arch=compute_61,code=compute_61;-gencode=arch=compute_35,cod
 
 # paths to apps and tools needed by NiftyPET
 ### start NiftyPET tools ###
-PATHTOOLS = '/ds/NiftyPET_tools'
-RESPATH = '/ds/NiftyPET_tools/niftyreg/bin/reg_resample'
-REGPATH = '/ds/NiftyPET_tools/niftyreg/bin/reg_aladin'
-DCM2NIIX = '/ds/NiftyPET_tools/dcm2niix/bin/dcm2niix'
-HMUDIR = '/ds/hardwareumaps'
+PATHTOOLS = '/work/NiftyPET_tools'
+RESPATH = '/work/NiftyPET_tools/niftyreg/bin/reg_resample'
+REGPATH = '/work/NiftyPET_tools/niftyreg/bin/reg_aladin'
+DCM2NIIX = '/work/NiftyPET_tools/dcm2niix/bin/dcm2niix'
+HMUDIR = '/work/hardwareumaps'
 ### end NiftyPET tools ###
 # -----------------------------------------------------
 
