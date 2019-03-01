@@ -3,7 +3,7 @@ FROM nvidia/cuda:9.2-devel-centos7
 
 LABEL maintainer="John J. Lee <www.github.com/jjleewustledu>"
 
-# set environment variables
+# set development environment
 #ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:$LD_LIBRARY_PATH
 ENV CMAKE_VERBOSE_MAKEFILE ON
@@ -63,32 +63,37 @@ RUN pip --no-cache-dir install --upgrade \
     conda install -y -c conda-forge nibabel=2.2.1 && \
     conda install -y -c conda-forge pydicom=1.0.2
 
-# setup filesystem and shell
-RUN mkdir work
+# setup filesystem, shell and volumes
+RUN mkdir /work && mkdir /hardwareumaps
 ENV HOME=/work
+ENV HARDWAREUMAPS=/hardwareumaps
+ENV NIFTYPET_TOOLS=/NiftyPET_tools
+ENV SUBJECTS_DIR=/SubjectsDir
 ENV SHELL=/bin/bash
 VOLUME $HOME
+VOLUME $HARDWAREUMAPS
+VOLUME $NIFTYPET_TOOLS
+VOLUME $SUBJECTS_DIR
 
 # install NiftyPET in separate layer;
-# because of undetermined cmake issue, pip install NIPET twice; manual interrupt and restart may be needed
-COPY hardwareumaps NIMPA NIPET $HOME/
-ENV  HARDWAREUMAPS $HOME/hardwareumaps
-#WORKDIR $HOME/NIMPA
-#RUN pip install --no-binary :all: --verbose -e . >  $HOME/install_nimpa.log
-#WORKDIR $HOME/NIPET
-#RUN pip install --no-binary :all: --verbose -e . >  $HOME/install_nipet.log && \
-#    pip install --no-binary :all: --verbose -e . >> $HOME/install_nipet.log
 WORKDIR $HOME
+RUN git clone https://github.com/jjleewustledu/NIMPA.git && \
+    git clone https://github.com/jjleewustledu/NIPET.git
+#RUN cd $HOME/NIMPA && \
+#    pip install --no-binary :all: --verbose -e . > install_nimpa.log && \
+#    cd $HOME/NIPET && \
+#    pip install --no-binary :all: --verbose -e . >  $HOME/install_nipet.log
+#WORKDIR $HOME
+COPY .niftypet $HOME/.niftypet
 
 # if install fails with
 # Command "python setup.py egg_info" failed with error code 1 in /tmp/pip-install-vpsgm6/nipet/
 # try "git config --system http.sslcainfo /etc/ssl/certs/ca-bundle.crt";
-# alternatively, install NIMPA & NIPET manually, then issue
-# > docker commit niftypetd-container jjleewustedu/niftypetd-image:nipet
+# alternatively, comment out RUN git clone ..., then install NIMPA and NIPET manually;
+# because of undetermined cmake issue, manual interrupt and restarting pip install may be needed;
+# then issue:
+# > docker commit niftypetd-container jjleewustledu/niftypetd-image:nipet
+# > docker push                       jjleewustledu/niftypetd-image:nipet
 
-# access containers with jupyter
-WORKDIR $HOME
-EXPOSE 7745
-ADD run_jupyter.sh $HOME/run_jupyter.sh
-RUN chmod +x $HOME/run_jupyter.sh
-CMD ["./run_jupyter.sh"]
+CMD ["sh", "-c", "ipython"]
+
