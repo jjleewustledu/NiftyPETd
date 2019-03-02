@@ -56,15 +56,15 @@ RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
 ENV PATH /opt/conda/bin:$PATH
 
 # pip install:  anaconda packages will go to /opt/conda/lib/python2.7/site-packages
-RUN pip --no-cache-dir install --upgrade \
-    altair vega_datasets notebook vega \
-    sklearn-pandas \
-    pixiedust && \
+RUN conda update -n base -y -c defaults conda && \
     conda install -y -c conda-forge nibabel=2.2.1 && \
     conda install -y -c conda-forge pydicom=1.0.2
 
 # setup filesystem, shell and volumes
-RUN mkdir /work && mkdir /hardwareumaps
+RUN mkdir /work && \
+    mkdir /hardwareumaps && \
+    mkdir /NiftyPET_tools && \
+    mkdir /SubjectsDir
 ENV HOME=/work
 ENV HARDWAREUMAPS=/hardwareumaps
 ENV NIFTYPET_TOOLS=/NiftyPET_tools
@@ -77,23 +77,24 @@ VOLUME $SUBJECTS_DIR
 
 # install NiftyPET in separate layer;
 WORKDIR $HOME
-RUN git clone https://github.com/jjleewustledu/NIMPA.git && \
-    git clone https://github.com/jjleewustledu/NIPET.git
+COPY NIMPA $HOME/NIMPA
+COPY NIPET $HOME/NIPET
 #RUN cd $HOME/NIMPA && \
 #    pip install --no-binary :all: --verbose -e . > install_nimpa.log && \
 #    cd $HOME/NIPET && \
 #    pip install --no-binary :all: --verbose -e . >  $HOME/install_nipet.log
-#WORKDIR $HOME
 COPY .niftypet $HOME/.niftypet
 
 # if install fails with
 # Command "python setup.py egg_info" failed with error code 1 in /tmp/pip-install-vpsgm6/nipet/
 # try "git config --system http.sslcainfo /etc/ssl/certs/ca-bundle.crt";
-# alternatively, comment out RUN git clone ..., then install NIMPA and NIPET manually;
+# alternatively, then install NIMPA and NIPET manually;
 # because of undetermined cmake issue, manual interrupt and restarting pip install may be needed;
 # then issue:
 # > docker commit niftypetd-container jjleewustledu/niftypetd-image:nipet
 # > docker push                       jjleewustledu/niftypetd-image:nipet
 
+WORKDIR $HOME
 CMD ["sh", "-c", "ipython"]
+
 
