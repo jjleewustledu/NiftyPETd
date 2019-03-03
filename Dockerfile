@@ -1,5 +1,5 @@
 # reference: https://hub.docker.com/r/nvidia/cuda/
-FROM nvidia/cuda:9.2-devel-centos7
+FROM nvidia/cuda:10.0-devel-centos7
 
 LABEL maintainer="John J. Lee <www.github.com/jjleewustledu>"
 
@@ -80,9 +80,11 @@ WORKDIR $HOME
 COPY NIMPA $HOME/NIMPA
 COPY NIPET $HOME/NIPET
 #RUN cd $HOME/NIMPA && \
+#    rm -rf build && \
 #    pip install --no-binary :all: --verbose -e . > install_nimpa.log && \
+#    rm -rf build && \
 #    cd $HOME/NIPET && \
-#    pip install --no-binary :all: --verbose -e . >  $HOME/install_nipet.log
+#    pip install --no-binary :all: --verbose -e . > install_nipet.log
 COPY .niftypet $HOME/.niftypet
 
 # if install fails with
@@ -91,8 +93,8 @@ COPY .niftypet $HOME/.niftypet
 # alternatively, then install NIMPA and NIPET manually;
 # because of undetermined cmake issue, manual interrupt and restarting pip install may be needed;
 # then issue:
-# > docker commit niftypetd-container jjleewustledu/niftypetd-image:nipet
-# > docker push                       jjleewustledu/niftypetd-image:nipet
+# > docker commit niftypetd-container jjleewustledu/niftypetd-image:nipet_cuda10
+# > docker push                       jjleewustledu/niftypetd-image:nipet_cuda10
 
 WORKDIR $HOME
 CMD ["sh", "-c", "ipython"]
