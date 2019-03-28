@@ -1,5 +1,4 @@
 #! /bin/bash
-DOCKER_HOME=/home2/jjlee/Docker
 CONTAINER_NAME=$1
 IMAGE_NAME=$2
 CMD=$3
@@ -17,6 +16,6 @@ if [[ $# -eq 2 ]] ; then
     CMD=' '
 fi
 
-CONTAINER="nvidia-docker run -it --name $CONTAINER_NAME -v ${HOME_DOCKER}/hardwareumaps/:/hardwareumaps -v ${HOME_DOCKER}/NiftyPET_tools/:/NiftyPET_tools -v ${HOME_DOCKER}/Cache/:/SubjectsDir $IMAGE_NAME $CMD"
+CONTAINER="nvidia-docker run -it --name $CONTAINER_NAME -v ${DOCKER_HOME}/hardwareumaps/:/hardwareumaps -v ${SINGULARITY_HOME}/:/SubjectsDir $IMAGE_NAME $CMD"
 echo 'Starting container with commmand: '$CONTAINER
 eval $CONTAINER

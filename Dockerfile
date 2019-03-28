@@ -27,6 +27,7 @@ RUN yum update -y && \
     libpng12-dev \
     libzmq3-dev \
     make \
+    pigz \
     pkg-config \
     python2-pip \
     python2-dev \
@@ -68,21 +69,19 @@ RUN conda update -n base -y -c defaults conda && \
 # setup filesystem and volumes
 RUN mkdir /work && \
     mkdir /hardwareumaps && \
-    mkdir /NiftyPET_tools && \
     mkdir /SubjectsDir
 ENV HOME=/work
 ENV HARDWAREUMAPS=/hardwareumaps
-ENV NIFTYPET_TOOLS=/NiftyPET_tools
 ENV SUBJECTS_DIR=/SubjectsDir
 VOLUME $HARDWAREUMAPS
-VOLUME $NIFTYPET_TOOLS
 VOLUME $SUBJECTS_DIR
 
 # install NiftyPET in separate layer;
 WORKDIR $HOME
-COPY NIMPA $HOME/NIMPA
-COPY NIPET $HOME/NIPET
-COPY .niftypet $HOME/.niftypet
+COPY NIMPA          $HOME/NIMPA
+COPY NIPET          $HOME/NIPET
+COPY NiftyPET_tools $HOME/NiftyPET_tools
+COPY .niftypet      $HOME/.niftypet
 #RUN cd $HOME/NIMPA && \
 #    pip install --no-binary :all: --verbose -e . > install_nimpa.log && \
 #    cd $HOME/NIPET && \
@@ -95,8 +94,8 @@ COPY .niftypet $HOME/.niftypet
 # because of undetermined cmake issue, manual interrupt and restarting pip install may be needed;
 # then exit niftypetd-container and
 # then issue:
-# > nvidia-docker commit niftypetd-container jjleewustledu/niftypetd-image:nipet_cuda10
-# > nvidia-docker push                       jjleewustledu/niftypetd-image:nipet_cuda10
+# > nvidia-docker commit niftypetd-container jjleewustledu/niftypetd-image:nipet_debug
+# > nvidia-docker push                       jjleewustledu/niftypetd-image:nipet_debug
 
 WORKDIR $HOME
 CMD ["sh", "-c", "ipython"]

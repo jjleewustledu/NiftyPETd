@@ -1,0 +1,2 @@
+/bin/ar qc libreg_nifti.a  CMakeFiles/reg_nifti.dir/nifti1_io.c.o CMakeFiles/reg_nifti.dir/znzlib.c.o
+/bin/ranlib libreg_nifti.a

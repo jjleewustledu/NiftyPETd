@@ -1,0 +1,2 @@
+/bin/ar qc lib_reg_blockMatching.a  CMakeFiles/_reg_blockMatching.dir/cpu/_reg_blockMatching.cpp.o
+/bin/ranlib lib_reg_blockMatching.a
