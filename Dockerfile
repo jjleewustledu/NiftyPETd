@@ -1,5 +1,5 @@
 # reference: https://hub.docker.com/r/nvidia/cuda/
-FROM nvidia/cuda:10.0-devel-centos7
+FROM nvidia/cuda:10.1-devel-centos7
 
 LABEL maintainer="John J. Lee <www.github.com/jjleewustledu>"
 
@@ -56,15 +56,19 @@ RUN wget --quiet https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noa
 
 # install anaconda
 RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
-    wget --quiet https://repo.continuum.io/archive/Anaconda2-2018.12-Linux-x86_64.sh -O ~/anaconda.sh && \
+    wget --quiet https://repo.continuum.io/archive/Anaconda2-2019.07-Linux-x86_64.sh -O ~/anaconda.sh && \
     /bin/bash ~/anaconda.sh -b -p /opt/conda && \
     rm ~/anaconda.sh
 ENV PATH /opt/conda/bin:$PATH
 
 # pip install:  anaconda packages will go to /opt/conda/lib/python2.7/site-packages
 RUN conda update -n base -y -c defaults conda && \
+    conda install -y -c anaconda ipykernel && \
+    conda install -y -c anaconda matplotlib && \
     conda install -y -c conda-forge nibabel=2.2.1 && \
-    conda install -y -c conda-forge pydicom=1.0.2
+    conda install -y -c conda-forge pydicom=1.0.2 && \
+    conda install -y -c conda-forge tqdm && \
+    conda install -y -c conda-forge ipywidgets    
 
 # setup filesystem and volumes
 RUN mkdir /work && \
@@ -72,6 +76,7 @@ RUN mkdir /work && \
     mkdir /SubjectsDir
 ENV HOME=/work
 ENV HARDWAREUMAPS=/hardwareumaps
+ENV HMUDIR=/hardwareumaps
 ENV SUBJECTS_DIR=/SubjectsDir
 VOLUME $HARDWAREUMAPS
 VOLUME $SUBJECTS_DIR
@@ -81,21 +86,19 @@ WORKDIR $HOME
 COPY NIMPA          $HOME/NIMPA
 COPY NIPET          $HOME/NIPET
 COPY NiftyPET_tools $HOME/NiftyPET_tools
-COPY .niftypet      $HOME/.niftypet
-#RUN cd $HOME/NIMPA && \
-#    pip install --no-binary :all: --verbose -e . > install_nimpa.log && \
-#    cd $HOME/NIPET && \
-#    pip install --no-binary :all: --verbose -e . > install_nipet.log
+ENV PATHTOOLS=$HOME/NiftyPET_tools
+RUN mkdir $HOME/.niftypet && \
+    cp -f $HOME/NIPET/resources/resources.py $HOME/.niftypet
+RUN cd $HOME/NIMPA && \
+    pip install --no-binary :all: --verbose -e . > install_nimpa.log && \
+    cd $HOME/NIPET && \
+    pip install --no-binary :all: --verbose -e . > install_nipet.log
 
-# if install fails with
-# Command "python setup.py egg_info" failed with error code 1 in /tmp/pip-install-vpsgm6/nipet/
-# try "git config --system http.sslcainfo /etc/ssl/certs/ca-bundle.crt";
-# alternatively, then install NIMPA and NIPET manually;
+# if install fails then try installing NIMPA and NIPET manually;
 # because of undetermined cmake issue, manual interrupt and restarting pip install may be needed;
-# then exit niftypetd-container and
-# then issue:
-# > nvidia-docker commit niftypetd-container jjleewustledu/niftypetd-image:nipet_debug
-# > nvidia-docker push                       jjleewustledu/niftypetd-image:nipet_debug
+# then exit niftypetd-container and issue:
+# > nvidia-docker commit niftypetd-container jjleewustledu/niftypetd-image:nipet20191022
+# > nvidia-docker push                       jjleewustledu/niftypetd-image:nipet20191022
 
 WORKDIR $HOME
 CMD ["sh", "-c", "ipython"]

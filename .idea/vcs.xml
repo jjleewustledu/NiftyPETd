@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/NIMPA" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/NIMPA.bak" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/NIPET" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/NIPET.bak" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/NiftyPET_tools/niftyreg/_src" vcs="Git" />
+  </component>
+</project>
